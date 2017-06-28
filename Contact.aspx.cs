@@ -10,25 +10,17 @@ using Newtonsoft.Json;
 public partial class Contact : System.Web.UI.Page
 {
     public List<Person> contactList = new List<Person>();
-    public List<Adress> adressList = new List<Adress>();
-    public List<Phone> phonList = new List<Phone>();
 
     static string connectionString = "Data Source=localhost;Initial Catalog=Elsa;Integrated Security=True";
 
 
     protected void Page_Load(object sender, EventArgs e)
-    {
-        if (Page.Request["deleta"] != null)
-        {
-            //http://localhost:51616/Contact.aspx?deleta=IAMERROR
-            string input = Page.Request["deleta"];
-        }
+    {  
         GetContacts();
         GetAdress();
         GetPhone();
 
         myLiteral.Text = JsonConvert.SerializeObject(contactList);
-
     }
 
     private void GetPhone()
@@ -56,7 +48,13 @@ public partial class Contact : System.Web.UI.Page
                 string typ = myReader["Typ"].ToString();
                 string phone = myReader["Phone"].ToString();
 
-                phonList.Add(new Phone(id, cid, typ, phone));
+                for (int i = 0; i < contactList.Count; i++)
+                {
+                    if (contactList[i].ID == cid)
+                    {
+                        contactList[i].myPhonNr.Add(new Phone(id, cid, typ, phone));
+                    }
+                }
             }
         }
         catch (Exception)
